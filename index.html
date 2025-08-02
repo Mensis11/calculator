@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Калькулятор фінансування</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #6b5b95; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .card { background: #fff; border-radius: 12px; padding: 2rem; width: 320px; color: #4a3f66; }
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .field input[type=number] { width: 100%; padding: 0.5rem; font-size: 1.25rem; border: 1px solid #ddd; border-radius: 8px; text-align: right; }
+    .slider { margin: 1rem 0; }
+    .slider__label { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .slider__track, input[type=range] { width: 100%; }
+    .results { display: flex; justify-content: space-between; margin: 1.5rem 0; font-size: 1rem; }
+    .results div { text-align: center; }
+    .results .value { font-size: 1.5rem; font-weight: bold; }
+    .btn { display: block; width: 100%; padding: 0.75rem; background: #e91e63; color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+    .btn:hover { background: #d81b60; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="field">
+      <label for="amount">Сума, доларів США</label>
+      <input type="number" id="amount" value="10000" min="0">
+    </div>
+    <div class="field">
+      <label for="rate">Ставка % на місяць</label>
+      <input type="number" id="rate" value="1" min="0" max="100">
+    </div>
+    <div class="slider">
+      <div class="slider__label">
+        <span>Строк фінансування</span>
+        <span id="term-label">60 місяців</span>
+      </div>
+      <input type="range" id="term" class="slider__track" min="12" max="60" step="12" value="60">
+      <div class="slider__label">
+        <span>12 міс.</span>
+        <span>60 міс.</span>
+      </div>
+    </div>
+    <div class="results">
+      <div>
+        <div>Щомісячний платіж</div>
+        <div class="value" id="monthly-payment">0 $</div>
+      </div>
+      <div>
+        <div>Строк</div>
+        <div class="value" id="term-value">60 міс.</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const amountInput = document.getElementById('amount');
+      const rateInput = document.getElementById('rate');
+      const termInput = document.getElementById('term');
+      const termLabel = document.getElementById('term-label');
+      const termValue = document.getElementById('term-value');
+      const paymentOutput = document.getElementById('monthly-payment');
+
+      function calculate() {
+        const P = +amountInput.value;
+        const r = +rateInput.value / 100;
+        const n = +termInput.value;
+        // Ставка річна? Ні — місячна ставка
+        // Щомісячна відсоткова частина: P * r
+        const interestPerMonth = P * r;
+        // Основний борг гаситься рівно: P / n
+        const principalPerMonth = P / n;
+        const monthlyPayment = principalPerMonth + interestPerMonth;
+        paymentOutput.innerText = Math.ceil(monthlyPayment).toLocaleString('uk') + ' $';
+        termLabel.innerText = n + ' місяців';
+        termValue.innerText = n + ' міс.';
+      }
+
+      amountInput.addEventListener('input', calculate);
+      rateInput.addEventListener('input', calculate);
+      termInput.addEventListener('input', calculate);
+
+      calculate();
+    });
+  </script>
+</body>
+</html>
